@@ -8,8 +8,8 @@ c_struct_only:
   - { name: C one, body: c body 1 }
   - { name: C two, body: c body 2 }
 d_struct_and_star:
-  - { name: D one (from [*]), body: D one (from structure) }
-  - { name: D two (from [*]), body: D two (from structure) }
+  - { name: "D one (from [*])", body: "D one (from structure)" }
+  - { name: "D two (from [*])", body: "D two (from structure)" }
 e_complex_star:
   - name: E one
     body: e body 1

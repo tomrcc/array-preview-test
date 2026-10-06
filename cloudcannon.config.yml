@@ -1,0 +1,231 @@
+# Where do previews for object items in an array have to live?
+# Icons show where a preview came from:
+#   filter_1 = the [*] input        filter_2 = the structure value
+# A card with no icon and a generic title means no preview applied.
+
+collections_config:
+  data:
+    path: data
+    glob:
+      - "*.yml"
+    name: Data
+    icon: database
+  pages:
+    path: content
+    glob:
+      - "*.md"
+    name: Pages
+    icon: description
+
+file_config:
+  - glob: data/arrays.yml
+    _inputs:
+      # A — objects, no structure, preview on [*]
+      a_star_only:
+        type: array
+        label: "A: [*] preview, no structure"
+      a_star_only[*]:
+        options:
+          preview:
+            text: [{ key: name }]
+            icon: filter_1
+
+      # B — same as A, plus type: object on [*]
+      b_star_typed:
+        type: array
+        label: "B: [*] preview + type: object, no structure"
+      b_star_typed[*]:
+        type: object
+        options:
+          preview:
+            text: [{ key: name }]
+            icon: filter_1
+
+      # C — structure preview only (control)
+      c_struct_only:
+        type: array
+        label: "C: structure preview only"
+        options:
+          structures:
+            values:
+              - label: Item
+                preview:
+                  text: [{ key: body }]
+                  icon: [filter_2]
+                value: { name: "", body: "" }
+
+      # D — structure preview AND [*] preview: which shows?
+      d_struct_and_star:
+        type: array
+        label: "D: structure preview + [*] preview"
+        options:
+          structures:
+            values:
+              - label: Item
+                preview:
+                  text: [{ key: body }]
+                  icon: [filter_2]
+                value: { name: "", body: "" }
+      d_struct_and_star[*]:
+        options:
+          preview:
+            text: [{ key: name }]
+            icon: filter_1
+
+      # E — like A, but items hold a nested object and array
+      e_complex_star:
+        type: array
+        label: "E: complex items, [*] preview, no structure"
+      e_complex_star[*]:
+        options:
+          preview:
+            text: [{ key: name }]
+            icon: filter_1
+
+      # F — like E, but structure preview (control for E)
+      f_complex_struct:
+        type: array
+        label: "F: complex items, structure preview"
+        options:
+          structures:
+            values:
+              - label: Item
+                preview:
+                  text: [{ key: body }]
+                  icon: [filter_2]
+                value:
+                  name: ""
+                  body: ""
+                  link: { text: "", href: "" }
+                  tags: []
+
+      # G — array of objects INSIDE a structure value; [*] preview defined
+      #     OUTSIDE the structure (here in file_config)
+      g_blocks:
+        type: array
+        label: "G: nested array, [*] preview outside the structure"
+        options:
+          structures:
+            values:
+              - label: Block G
+                icon: widgets
+                value:
+                  title: ""
+                  g_items: []
+      g_items:
+        type: array
+      g_items[*]:
+        options:
+          preview:
+            text: [{ key: name }]
+            icon: filter_1
+
+      # H — same as G, but the [*] preview is INSIDE the structure value
+      h_blocks:
+        type: array
+        label: "H: nested array, [*] preview inside the structure value"
+        options:
+          structures:
+            values:
+              - label: Block H
+                icon: widgets
+                _inputs:
+                  h_items:
+                    type: array
+                  h_items[*]:
+                    options:
+                      preview:
+                        text: [{ key: name }]
+                        icon: filter_1
+                value:
+                  title: ""
+                  h_items: []
+
+  # R — top-level array data file of objects; $ linked to a structure
+  #     that carries the item preview
+  - glob: data/root-array.yml
+    _inputs:
+      $:
+        type: array
+        options:
+          structures:
+            values:
+              - label: Item
+                preview:
+                  text: [{ key: body }]
+                  icon: [filter_2]
+                value: { name: "", body: "" }
+
+_snippets:
+  # S1 — repeating parser, preview on tab_items[*]
+  tabs_a:
+    snippet: "<TabsA>[[repeating]]</TabsA>"
+    inline: false
+    preview:
+      text: "S1: [*] preview"
+    _inputs:
+      tab_items:
+        type: array
+      tab_items[*]:
+        options:
+          preview:
+            text: [{ key: name }]
+            icon: filter_1
+    params: &tab_params
+      repeating:
+        parser: repeating
+        options:
+          snippet: "<Tab [[named_args]]>[[tab_content]]</Tab>"
+          editor_key: tab_items
+          default_length: 2
+          style:
+            output: block
+            between: "\n\n"
+            block:
+              leading: "\n\n"
+              trailing: "\n\n"
+      named_args:
+        parser: key_values
+        options:
+          models:
+            - editor_key: name
+              type: string
+          format:
+            root_value_delimiter: "="
+            string_boundary:
+              - '"'
+      tab_content:
+        parser: content
+        options:
+          editor_key: tab_content
+          style:
+            block:
+              leading: "\n\n"
+              trailing: "\n\n"
+
+  # S2 — same snippet, preview on a structure instead
+  tabs_b:
+    snippet: "<TabsB>[[repeating]]</TabsB>"
+    inline: false
+    preview:
+      text: "S2: structure preview"
+    _inputs:
+      tab_items:
+        type: array
+        options:
+          structures:
+            values:
+              - label: Tab
+                preview:
+                  text: [{ key: name }]
+                  icon: [filter_2]
+                value: { name: "", tab_content: "" }
+    params: *tab_params
+
+  # S3 — same snippet, no preview config (baseline)
+  tabs_c:
+    snippet: "<TabsC>[[repeating]]</TabsC>"
+    inline: false
+    preview:
+      text: "S3: no item preview"
+    params: *tab_params

@@ -1,0 +1,40 @@
+a_star_only:
+  - { name: A one, body: a body 1 }
+  - { name: A two, body: a body 2 }
+b_star_typed:
+  - { name: B one, body: b body 1 }
+  - { name: B two, body: b body 2 }
+c_struct_only:
+  - { name: C one, body: c body 1 }
+  - { name: C two, body: c body 2 }
+d_struct_and_star:
+  - { name: D one (from [*]), body: D one (from structure) }
+  - { name: D two (from [*]), body: D two (from structure) }
+e_complex_star:
+  - name: E one
+    body: e body 1
+    link: { text: Link, href: / }
+    tags: [x, y]
+  - name: E two
+    body: e body 2
+    link: { text: Link, href: / }
+    tags: [x]
+f_complex_struct:
+  - name: F one
+    body: F one (from structure)
+    link: { text: Link, href: / }
+    tags: [x, y]
+  - name: F two
+    body: F two (from structure)
+    link: { text: Link, href: / }
+    tags: [x]
+g_blocks:
+  - title: Block G
+    g_items:
+      - { name: G one, body: g body 1 }
+      - { name: G two, body: g body 2 }
+h_blocks:
+  - title: Block H
+    h_items:
+      - { name: H one, body: h body 1 }
+      - { name: H two, body: h body 2 }
